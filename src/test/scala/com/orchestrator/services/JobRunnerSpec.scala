@@ -18,7 +18,7 @@ class JobRunnerSpec extends WordSpec with MockFactory {
       val jobRunner = new JobRunnerService(taskRunner)
       jobRunner.runJob(job1)
     }
-    
+
     "not run subsequent jobs after a failure" in {
       val task1 = Task("task1", "true")
       val task2 = Task("task2", "false")

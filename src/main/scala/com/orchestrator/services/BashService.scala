@@ -35,7 +35,6 @@ class BashService(implicit val system: ActorSystem) extends TaskRunnerService {
       command = split.foldLeft(Option.empty[ProcessBuilder]) { case (a, b) => a.fold(Some(stringToProcess(b))) { aa => Some(aa #| b) } }
     } else if (cmd.contains(">>")) {
       val split = cmd.split(">>").map(_.trim)
-      log.info(split(1))
       command =
         if (split.length == 2) Some(split(0) #>> new File(split(1)))
         else Some(cmd)

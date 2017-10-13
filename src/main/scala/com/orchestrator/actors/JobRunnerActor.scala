@@ -39,18 +39,17 @@ class JobRunnerActor extends Actor with ActorLogging {
       jobRegistry ! UpdateLastRunAt(job, DateTime.now)
 
     case RunTask(task) =>
-      log.info(s"Running job: ${task.name} (outside of Future)")
       Future {
         log.info(s"Running job: ${task.name}")
         taskRunnerService.runTask(task)
       }
 
     case ScheduledRun =>
-      log.info("Starting scheduled run")
+      log.debug("Starting scheduled run")
       (jobRegistry ? GetJobs).mapTo[Jobs].foreach { jobs =>
         val now = DateTime.now
         val jobsToRun = jobs.jobs.filter(j => j.lastRunAt.forall(d => (now.clicks - d.clicks) >= j.frequency.toMillis))
-        log.info(s"${jobsToRun.length} jobs to run")
+        log.debug(s"${jobsToRun.length} jobs to run")
         jobsToRun.foreach(j => self ! RunJob(j))
       }
   }
